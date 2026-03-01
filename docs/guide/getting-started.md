@@ -97,3 +97,7 @@ See details and merge behavior in [Writing Resources - Metadata APIs: with() vs 
 ## Pagination & Cursor Recipes
 
 For ready-to-copy configuration patterns, see [Pagination & Cursor Quick Recipes](./pagination-cursor-recipes.md).
+
+## Using Non-Connect Frameworks
+
+If you are using frameworks outside H3/Express or non-Connect response styles, see [Using Resora Outside H3/Express (Non-Connect Frameworks)](./non-connect-frameworks.md).

@@ -1,8 +1,7 @@
-import { GenericBody, Resource, ServerResponse } from 'src'
+import { Resource, ServerResponse } from 'src'
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { ResourceCollection } from 'src'
-import { Server } from 'http'
 import express from 'express'
 import supertest from 'supertest'
 
@@ -164,12 +163,12 @@ describe('Connect-style Requests (Express)', () => {
                     .header('X-From-Hook', '1')
                     .setStatusCode(202)
 
-                this.body = {
-                    ...this.body,
+                this.setBody({
+                    ...this.getBody(),
                     meta: {
                         fromWithResponse: true,
                     },
-                }
+                })
             }
         }
 
@@ -196,13 +195,15 @@ describe('Connect-style Requests (Express)', () => {
             withResponse () {
                 this.withResponseContext?.response.header('X-Collection-Hook', '1')
 
-                this.body = {
-                    ...this.body,
+                const body = this.getBody()
+
+                this.setBody({
+                    ...body,
                     meta: {
-                        ...(this.body.meta || {}),
+                        ...(body.meta || {}),
                         fromWithResponse: true,
                     },
-                }
+                })
             }
         }
 

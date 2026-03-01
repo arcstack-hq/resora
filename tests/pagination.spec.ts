@@ -30,7 +30,7 @@ describe('Resource Pagination', () => {
         }
 
         const jsonResource = new ResourceCollection(resource)
-        const jsonResponse = jsonResource.json().body
+        const jsonResponse = jsonResource.getBody()
 
         expect(jsonResponse).toEqual({
             data: [{ id: 1 }, { id: 2 }],
@@ -60,7 +60,7 @@ describe('Resource Pagination', () => {
         }
 
         const jsonResource = new Resource(resource)
-        const jsonResponse = jsonResource.json().body
+        const jsonResponse = jsonResource.getBody()
         expect(jsonResponse).toEqual({ data: resource })
     })
 
@@ -76,7 +76,7 @@ describe('Resource Pagination', () => {
         }
 
         const jsonResource = new Resource(resource)
-        const jsonResponse = jsonResource.json().body
+        const jsonResponse = jsonResource.getBody()
 
         expect(jsonResponse).toEqual({ data: resource.data })
     })
@@ -94,7 +94,7 @@ describe('Resource Pagination', () => {
         }
 
         const jsonResource = new ResourceCollection(resource)
-        const jsonResponse = jsonResource.json().body
+        const jsonResponse = jsonResource.getBody()
 
         expect(jsonResponse).toEqual({
             data: [],
@@ -125,7 +125,7 @@ describe('Resource Pagination', () => {
             },
         }
 
-        const jsonResponse = new ResourceCollection(resource).json().body
+        const jsonResponse = new ResourceCollection(resource).getBody()
 
         expect(jsonResponse).toEqual({
             data: [{ id: 1 }, { id: 2 }],
@@ -152,7 +152,7 @@ describe('Resource Pagination', () => {
             },
         }
 
-        const jsonResponse = new ResourceCollection(resource).json().body
+        const jsonResponse = new ResourceCollection(resource).getBody()
 
         expect(jsonResponse).toEqual({
             data: [{ id: 1 }],
@@ -169,7 +169,7 @@ describe('Resource Pagination', () => {
         }
 
         const jsonResource = new ResourceCollection(resource)
-        const jsonResponse = jsonResource.json().body
+        const jsonResponse = jsonResource.getBody()
 
         expect(jsonResponse).toEqual({
             data: [{ id: 1 }, { id: 2 }],

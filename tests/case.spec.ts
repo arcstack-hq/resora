@@ -189,7 +189,7 @@ describe('Global Case Configuration', () => {
         setGlobalCase('snake')
 
         const resource = new Resource({ firstName: 'John', lastName: 'Doe' })
-        const body = resource.json().body
+        const body = resource.getBody()
 
         expect(body).toEqual({ data: { first_name: 'John', last_name: 'Doe' } })
     })
@@ -201,7 +201,7 @@ describe('Global Case Configuration', () => {
             { firstName: 'John', lastName: 'Doe' },
             { firstName: 'Jane', lastName: 'Smith' },
         ])
-        const body = collection.json().body
+        const body = collection.getBody()
 
         expect(body).toEqual({
             data: [
@@ -215,7 +215,7 @@ describe('Global Case Configuration', () => {
         setGlobalCase('snake')
 
         const resource = new GenericResource({ firstName: 'John', lastName: 'Doe' })
-        const body = resource.json().body
+        const body = resource.getBody()
 
         expect(body).toEqual({ data: { first_name: 'John', last_name: 'Doe' } })
     })
@@ -225,7 +225,7 @@ describe('Global Case Configuration', () => {
         setGlobalCase(undefined)
 
         const resource = new Resource({ firstName: 'John' })
-        const body = resource.json().body
+        const body = resource.getBody()
 
         expect(body).toEqual({ data: { firstName: 'John' } })
     })
@@ -249,7 +249,7 @@ describe('Per-Resource Case Override', () => {
         }
 
         const resource = new SnakeResource({ firstName: 'John', lastName: 'Doe' })
-        const body = resource.json().body
+        const body = resource.getBody()
 
         expect(body).toEqual({ data: { first_name: 'John', last_name: 'Doe' } })
     })
@@ -267,7 +267,7 @@ describe('Per-Resource Case Override', () => {
         }
 
         const resource = new PascalResource({ first_name: 'John', last_name: 'Doe' })
-        const body = resource.json().body
+        const body = resource.getBody()
 
         expect(body).toEqual({ data: { FirstName: 'John', LastName: 'Doe' } })
     })
@@ -285,7 +285,7 @@ describe('Per-Resource Case Override', () => {
         }
 
         const resource = new KebabResource({ firstName: 'John', lastName: 'Doe' })
-        const body = resource.json().body
+        const body = resource.getBody()
 
         expect(body).toEqual({ data: { 'first-name': 'John', 'last-name': 'Doe' } })
     })
@@ -303,7 +303,7 @@ describe('Per-Resource Case Override', () => {
         }
 
         const resource = new CamelResource({ first_name: 'John', last_name: 'Doe' })
-        const body = resource.json().body
+        const body = resource.getBody()
 
         expect(body).toEqual({ data: { firstName: 'John', lastName: 'Doe' } })
     })
@@ -320,7 +320,7 @@ describe('Per-Resource Case Override', () => {
         }
 
         const resource = new UpperResource({ firstName: 'John' })
-        const body = resource.json().body
+        const body = resource.getBody()
 
         expect(body).toEqual({ data: { FIRSTNAME: 'John' } })
     })
@@ -339,7 +339,7 @@ describe('Per-Resource Case Override', () => {
         }
 
         const resource = new SnakeResource({ firstName: 'John' })
-        const body = resource.json().body
+        const body = resource.getBody()
 
         expect(body).toEqual({ data: { first_name: 'John' } })
     })
@@ -352,7 +352,7 @@ describe('Per-Resource Case Override', () => {
         const collection = new SnakeCollection([
             { firstName: 'John', lastName: 'Doe' },
         ])
-        const body = collection.json().body
+        const body = collection.getBody()
 
         expect(body).toEqual({
             data: [{ first_name: 'John', last_name: 'Doe' }],
@@ -365,7 +365,7 @@ describe('Per-Resource Case Override', () => {
         }
 
         const resource = new SnakeGeneric({ firstName: 'John', lastName: 'Doe' })
-        const body = resource.json().body
+        const body = resource.getBody()
 
         expect(body).toEqual({ data: { first_name: 'John', last_name: 'Doe' } })
     })
@@ -392,7 +392,7 @@ describe('Case Transformation with Collections', () => {
             { firstName: 'John', lastName: 'Doe' },
             { firstName: 'Jane', lastName: 'Smith' },
         ])
-        const body = collection.json().body
+        const body = collection.getBody()
 
         expect(body).toEqual({
             data: [
@@ -411,7 +411,7 @@ describe('Case Transformation with Collections', () => {
             ],
             pagination: { currentPage: 1, total: 10 },
         })
-        const body = collection.json().body
+        const body = collection.getBody()
 
         expect(body).toEqual({
             data: [{ first_name: 'John', last_name: 'Doe' }],
@@ -432,7 +432,7 @@ describe('Case Transformation with Collections', () => {
                 },
             },
         })
-        const body = resource.json().body
+        const body = resource.getBody()
 
         expect(body).toEqual({
             data: {

@@ -31,7 +31,7 @@ import {
  */
 export class Resource<R extends ResourceData | NonCollectible = ResourceData> {
   [key: string]: any;
-  public body: ResourceBody<R> = { data: {} as any }
+  private body: ResourceBody<R> = { data: {} as any }
   public resource: R
   private additionalMeta?: MetaData
   protected withResponseContext?: {
@@ -109,6 +109,24 @@ export class Resource<R extends ResourceData | NonCollectible = ResourceData> {
    */
   data () {
     return this.toArray()
+  }
+
+  /**
+   * Get the current serialized output body.
+   */
+  getBody (): ResourceBody<R> {
+    this.json()
+
+    return this.body
+  }
+
+  /**
+   * Replace the current serialized output body.
+   */
+  protected setBody (body: ResourceBody<R>) {
+    this.body = body
+
+    return this
   }
 
   /**

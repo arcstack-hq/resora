@@ -36,6 +36,7 @@ export default defineConfig({
           { text: 'Resources', link: '/guide/resources' },
           { text: 'Collections', link: '/guide/collections' },
           { text: 'Server Response', link: '/guide/server-response' },
+          { text: 'Non-Connect Frameworks', link: '/guide/non-connect-frameworks' },
           { text: 'Writing Resources', link: '/guide/writing-resources' },
           { text: 'Conditional Rendering', link: '/guide/conditional-attributes' },
           { text: 'Generating Resources', link: '/guide/generating-resources' },

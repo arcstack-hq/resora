@@ -141,6 +141,8 @@ Transport state and payload state are intentionally separated.
 
 Resora does not replace the response lifecycle — it integrates into it.
 
+If you're using a framework outside H3/Express or non-Connect response styles, use the transformation-first pattern documented in [Using Resora Outside H3/Express (Non-Connect Frameworks)](./non-connect-frameworks.md).
+
 ## If `.response()` Is Not Used
 
 - The Resource acts as a pure transformation layer

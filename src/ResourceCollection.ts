@@ -32,7 +32,7 @@ import {
  */
 export class ResourceCollection<R extends ResourceData[] | Collectible = ResourceData[], T extends ResourceData = any> {
   [key: string]: any;
-  public body: CollectionBody<R> = { data: [] as any }
+  private body: CollectionBody<R> = { data: [] as any }
   public resource: R
   public collects?: typeof Resource<T>
   private additionalMeta?: MetaData
@@ -75,6 +75,24 @@ export class ResourceCollection<R extends ResourceData[] | Collectible = Resourc
    */
   data () {
     return this.toArray()
+  }
+
+  /**
+   * Get the current serialized output body.
+   */
+  getBody (): CollectionBody<R> {
+    this.json()
+
+    return this.body
+  }
+
+  /**
+   * Replace the current serialized output body.
+   */
+  protected setBody (body: CollectionBody<R>) {
+    this.body = body
+
+    return this
   }
 
   /**

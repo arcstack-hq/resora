@@ -21,8 +21,8 @@ describe('Conditional Attributes', () => {
             }
         }
 
-        const adminBody = new UserResource({ id: 1, isAdmin: true, email: 'admin@example.com' }).json().body
-        const memberBody = new UserResource({ id: 2, isAdmin: false, email: null }).json().body
+        const adminBody = new UserResource({ id: 1, isAdmin: true, email: 'admin@example.com' }).getBody()
+        const memberBody = new UserResource({ id: 2, isAdmin: false, email: null }).getBody()
 
         expect(adminBody).toEqual({
             data: {
@@ -63,7 +63,7 @@ describe('Conditional Attributes', () => {
         disabled.hitCount = 0
         disabled.mergeHitCount = 0
 
-        expect(disabled.json().body).toEqual({
+        expect(disabled.getBody()).toEqual({
             data: {
                 enabled: false,
             },
@@ -75,7 +75,7 @@ describe('Conditional Attributes', () => {
         enabled.hitCount = 0
         enabled.mergeHitCount = 0
 
-        expect(enabled.json().body).toEqual({
+        expect(enabled.getBody()).toEqual({
             data: {
                 enabled: true,
                 value: 'loaded',
@@ -105,7 +105,7 @@ describe('Conditional Attributes', () => {
         const body = new UserCollection([
             { id: 1, isAdmin: true },
             { id: 2, isAdmin: false },
-        ]).json().body
+        ]).getBody()
 
         expect(body).toEqual({
             data: [
@@ -126,13 +126,13 @@ describe('Conditional Attributes', () => {
             }
         }
 
-        expect(new UserGeneric({ id: 1, nickname: null, active: false }).json().body).toEqual({
+        expect(new UserGeneric({ id: 1, nickname: null, active: false }).getBody()).toEqual({
             data: {
                 id: 1,
             },
         })
 
-        expect(new UserGeneric({ id: 2, nickname: 'neo', active: true }).json().body).toEqual({
+        expect(new UserGeneric({ id: 2, nickname: 'neo', active: true }).getBody()).toEqual({
             data: {
                 id: 2,
                 nickname: 'neo',

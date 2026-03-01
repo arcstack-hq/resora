@@ -9,7 +9,7 @@ describe('Metadata with() API', () => {
 
     it('adds metadata to a single resource', () => {
         const resource = new Resource({ id: 1, name: 'John' })
-        const body = resource.with({ traceId: 'abc-123' }).json().body
+        const body = resource.with({ traceId: 'abc-123' }).getBody()
 
         expect(body).toEqual({
             data: { id: 1, name: 'John' },
@@ -19,7 +19,7 @@ describe('Metadata with() API', () => {
 
     it('adds metadata via callback on a single resource', () => {
         const resource = new Resource({ id: 1, role: 'admin' })
-        const body = resource.withMeta((r) => ({ actor: r.role })).json().body
+        const body = resource.withMeta((r) => ({ actor: r.role })).getBody()
 
         expect(body).toEqual({
             data: { id: 1, role: 'admin' },
@@ -32,7 +32,7 @@ describe('Metadata with() API', () => {
         const body = resource
             .with({ request: { id: 'r1', source: 'api' } })
             .with({ request: { source: 'worker' }, debug: true })
-            .json().body
+            .getBody()
 
         expect(body).toEqual({
             data: { id: 1 },
@@ -45,7 +45,7 @@ describe('Metadata with() API', () => {
         const resource = new Resource({ id: 1 })
         resource.json()
 
-        const body = resource.with({ late: true }).body
+        const body = resource.with({ late: true }).getBody()
 
         expect(body).toEqual({
             data: { id: 1 },
@@ -59,7 +59,7 @@ describe('Metadata with() API', () => {
             pagination: { currentPage: 1, total: 10 },
         })
 
-        const body = collection.with({ requestId: 'r-100' }).json().body
+        const body = collection.with({ requestId: 'r-100' }).getBody()
 
         expect(body).toEqual({
             data: [{ id: 1 }],
@@ -77,7 +77,7 @@ describe('Metadata with() API', () => {
             cursor: { previous: 'p1', next: 'n1' },
         })
 
-        const body = collection.with({ requestId: 'r-200' }).json().body
+        const body = collection.with({ requestId: 'r-200' }).getBody()
 
         expect(body).toEqual({
             data: [{ id: 1 }],
@@ -92,7 +92,7 @@ describe('Metadata with() API', () => {
         setGlobalResponseRootKey('payload')
 
         const resource = new Resource({ id: 1, name: 'John' })
-        const body = resource.with({ requestId: 'req-1' }).json().body
+        const body = resource.with({ requestId: 'req-1' }).getBody()
 
         expect(body).toEqual({
             payload: { id: 1, name: 'John' },
@@ -102,7 +102,7 @@ describe('Metadata with() API', () => {
 
     it('supports with() on GenericResource', () => {
         const resource = new GenericResource({ id: 1, role: 'admin' })
-        const body = resource.with({ policy: 'strict' }).json().body
+        const body = resource.with({ policy: 'strict' }).getBody()
 
         expect(body).toEqual({
             data: { id: 1, role: 'admin' },
@@ -121,7 +121,7 @@ describe('Metadata with() API', () => {
 
         const resource = new CustomResource({ id: 1, name: 'John' })
 
-        expect(resource.json().body).toEqual({
+        expect(resource.getBody()).toEqual({
             data: { id: 1, name: 'John' },
             feature: 'custom-resource-meta',
         })
@@ -141,7 +141,7 @@ describe('Metadata with() API', () => {
             pagination: { currentPage: 2, total: 20 },
         })
 
-        expect(collection.json().body).toEqual({
+        expect(collection.getBody()).toEqual({
             data: [{ id: 1 }],
             meta: {
                 current_page: 2,
@@ -165,7 +165,7 @@ describe('Metadata with() API', () => {
             cursor: { previous: 'p1', next: 'n1' },
         })
 
-        expect(collection.json().body).toEqual({
+        expect(collection.getBody()).toEqual({
             data: [{ id: 1 }],
             meta: {
                 cursor: { previous: 'p1', next: 'n1' },

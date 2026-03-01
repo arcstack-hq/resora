@@ -152,7 +152,7 @@ Output:
 Collections also support:
 
 ```ts
-collection.additional({ status: 'success' }).body;
+collection.additional({ status: 'success' }).getBody();
 ```
 
 Result:

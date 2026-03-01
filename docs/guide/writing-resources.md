@@ -34,7 +34,7 @@ Usage:
 const resource = { id: 1, name: 'John Doe' };
 const userResource = new UserResource(resource);
 
-userResource.json().body;
+userResource.getBody();
 ```
 
 Output:
@@ -70,7 +70,7 @@ Usage:
 const resource = { id: 1, name: 'John Doe' };
 const userResource = new UserResource(resource);
 
-userResource.json().body;
+userResource.getBody();
 ```
 
 Output:
@@ -148,7 +148,7 @@ Use this for per-request metadata and strong TypeScript inference.
 const body = new UserResource({ id: 1, name: 'John' })
   .withMeta((resource) => ({ actor: resource.name }))
   .withMeta({ traceId: 'abc-123' })
-  .json().body;
+  .getBody();
 ```
 
 ### Merge behavior
@@ -170,7 +170,7 @@ const resource = [{ id: 1, name: 'John Doe' }];
 
 const collection = userResource.collection(resource);
 
-collection.json().body;
+collection.getBody();
 ```
 
 Output:
@@ -219,7 +219,7 @@ const resource = [{ id: 1, name: 'John Doe' }];
 
 const collection = new UserCollection(resource);
 
-collection.json().body;
+collection.getBody();
 ```
 
 Output:
@@ -252,7 +252,7 @@ Using the same `UserCollection`:
 ```ts
 const collection = new UserCollection(resource);
 
-collection.json().body;
+collection.getBody();
 ```
 
 Output:
@@ -349,7 +349,7 @@ Both `Resource` and `ResourceCollection` support chaining.
 Example:
 
 ```ts
-collection.additional({ status: 'success' }).json().body;
+collection.additional({ status: 'success' }).getBody();
 ```
 
 Output:
@@ -387,13 +387,15 @@ class UserResource extends Resource {
   withResponse(response: ServerResponse) {
     response.header('X-Resource', 'user').setStatusCode(202);
 
-    this.body = {
-      ...this.body,
+    const body = this.getBody();
+
+    this.setBody({
+      ...body,
       meta: {
-        ...(this.body.meta || {}),
+        ...(body.meta || {}),
         fromWithResponse: true,
       },
-    };
+    });
   }
 }
 ```

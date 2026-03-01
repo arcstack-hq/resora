@@ -36,7 +36,7 @@ export class GenericResource<
   T extends ResourceData = any
 > {
   [key: string]: any;
-  public body: GenericBody<R> = { data: {} as any }
+  private body: GenericBody<R> = { data: {} as any }
   public resource: R
   public collects?: typeof Resource<T>
   private additionalMeta?: MetaData
@@ -102,6 +102,24 @@ export class GenericResource<
    */
   data (): R {
     return this.resource
+  }
+
+  /**
+   * Get the current serialized output body.
+   */
+  getBody (): GenericBody<R> {
+    this.json()
+
+    return this.body
+  }
+
+  /**
+   * Replace the current serialized output body.
+   */
+  protected setBody (body: GenericBody<R>) {
+    this.body = body
+
+    return this
   }
 
   /**

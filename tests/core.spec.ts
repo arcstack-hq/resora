@@ -24,14 +24,14 @@ describe('Core', () => {
         const resource = { id: 1, name: 'Test Resource' }
         const jsonResource = new Resource(resource)
 
-        expect(jsonResource.json().body).toEqual({ data: resource })
+        expect(jsonResource.getBody()).toEqual({ data: resource })
     })
 
     it('should allow chaining of methods', () => {
         const resource = { id: 1, name: 'Test Resource' }
         const jsonResource = new Resource(resource)
 
-        expect(jsonResource.additional({ meta: 'test' }).body).toEqual({
+        expect(jsonResource.additional({ meta: 'test' }).getBody()).toEqual({
             data: resource,
             meta: 'test',
         })
@@ -56,12 +56,12 @@ describe('Core', () => {
     it('should allow class-level withResponse to mutate final body before dispatch', async () => {
         class CustomResource extends Resource {
             withResponse () {
-                this.body = {
-                    ...this.body,
+                this.setBody({
+                    ...this.getBody(),
                     meta: {
                         fromWithResponse: true,
                     },
-                }
+                })
             }
         }
 
@@ -119,7 +119,7 @@ describe('Extending Resources', () => {
         const resource = [{ id: 1, name: 'Test Resource' }]
         const customResource = new CustomResource(resource)
 
-        expect(customResource.additional({ meta: 'test' }).body).toEqual({
+        expect(customResource.additional({ meta: 'test' }).getBody()).toEqual({
             data: [{ id: 1, name: 'Test Resource' }],
             meta: 'test',
         })
@@ -139,7 +139,7 @@ describe('Extending Resources', () => {
         const resource = [{ id: 1, name: 'Test Resource' }]
         const collection = CustomResource.collection(resource)
 
-        expect(collection.json().body).toEqual({ data: [{ id: 1, name: 'Test Resource', custom: 'data' }] })
+        expect(collection.getBody()).toEqual({ data: [{ id: 1, name: 'Test Resource', custom: 'data' }] })
         expect(collection).toBeInstanceOf(ResourceCollection)
         expect(collection.data()).toEqual(resource)
     })
@@ -167,7 +167,7 @@ describe('Extending Collections', () => {
 
         const resource = [{ id: 1, name: 'Test Resource' }]
         const customResource = new CustomCollection(resource)
-        expect(customResource.json().body).toEqual({ data: [{ id: 1, name: 'Test Resource', custom: 'data' }] })
+        expect(customResource.getBody()).toEqual({ data: [{ id: 1, name: 'Test Resource', custom: 'data' }] })
     })
 
     it('should handle pagination in collections', () => {
@@ -192,7 +192,7 @@ describe('Extending Collections', () => {
         const resource = { data: [{ id: 1, name: 'Test Resource' }], pagination: { currentPage: 1, total: 10 } }
         const customResource = new CustomCollection(resource)
 
-        expect(customResource.json().body).toEqual({
+        expect(customResource.getBody()).toEqual({
             data: [{ id: 1, name: 'Test Resource', custom: 'data' }],
             meta: { current_page: 1, total: 10 },
         })
@@ -220,7 +220,7 @@ describe('Extending Collections', () => {
         const resource = { data: [{ id: 1, name: 'Test Resource' }], cursor: { previous: 'abc', next: 'def' } }
         const customResource = new CustomCollection(resource)
 
-        expect(customResource.json().body).toEqual({
+        expect(customResource.getBody()).toEqual({
             data: [{ id: 1, name: 'Test Resource', custom: 'data' }],
             meta: { cursor: resource.cursor },
         })
@@ -252,7 +252,7 @@ describe('Extending Collections', () => {
         }
         const customResource = new CustomCollection(resource)
 
-        expect(customResource.json().body).toEqual({
+        expect(customResource.getBody()).toEqual({
             data: [{ id: 1, name: 'Test Resource', custom: 'data' }],
             meta: { current_page: 1, total: 10, cursor: resource.cursor },
         })
@@ -280,7 +280,7 @@ describe('Extending Collections', () => {
         const resource = { data: [{ id: 1, name: 'Test Resource' }] }
         const customResource = new CustomCollection(resource)
 
-        expect(customResource.additional({ meta: 'test' }).body).toEqual({
+        expect(customResource.additional({ meta: 'test' }).getBody()).toEqual({
             data: [{ id: 1, name: 'Test Resource', custom: 'data' }],
             meta: 'test',
         })

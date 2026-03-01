@@ -22,7 +22,7 @@ describe('Response Structure', () => {
     it('uses the default data root key', () => {
         const resource = new Resource({ id: 1, name: 'Test' })
 
-        expect(resource.json().body).toEqual({
+        expect(resource.getBody()).toEqual({
             data: { id: 1, name: 'Test' },
         })
     })
@@ -32,7 +32,7 @@ describe('Response Structure', () => {
 
         const resource = new Resource({ id: 1, name: 'Test' })
 
-        expect(resource.json().body).toEqual({
+        expect(resource.getBody()).toEqual({
             payload: { id: 1, name: 'Test' },
         })
     })
@@ -48,7 +48,7 @@ describe('Response Structure', () => {
 
         const resource = new UserResource({ id: 1, name: 'Test' })
 
-        expect(resource.json().body).toEqual({
+        expect(resource.getBody()).toEqual({
             result: { id: 1, name: 'Test' },
         })
     })
@@ -58,7 +58,7 @@ describe('Response Structure', () => {
 
         const resource = new Resource({ id: 1, name: 'Test' })
 
-        expect(resource.additional({ data: { age: 20 }, meta: 'ok' }).body).toEqual({
+        expect(resource.additional({ data: { age: 20 }, meta: 'ok' }).getBody()).toEqual({
             payload: { id: 1, name: 'Test', age: 20 },
             data: { age: 20 },
             meta: 'ok',
@@ -74,7 +74,7 @@ describe('Response Structure', () => {
 
         const resource = new Resource({ id: 1, name: 'Test' })
 
-        expect(resource.json().body).toEqual({
+        expect(resource.getBody()).toEqual({
             result: { id: 1, name: 'Test' },
             message: 'success',
             type: 'resource',
@@ -97,7 +97,7 @@ describe('Response Structure', () => {
 
         const resource = new UserResource({ id: 1, name: 'Test' })
 
-        expect(resource.json().body).toEqual({
+        expect(resource.getBody()).toEqual({
             local: { id: 1, name: 'Test' },
             source: 'resource',
         })
@@ -111,7 +111,7 @@ describe('Response Structure', () => {
             pagination: { currentPage: 1, total: 10 },
         })
 
-        expect(collection.json().body).toEqual({
+        expect(collection.getBody()).toEqual({
             items: [{ id: 1, name: 'A' }],
             meta: { current_page: 1, total: 10 },
         })
@@ -135,7 +135,7 @@ describe('Response Structure', () => {
             { id: 1, fullName: 'John Doe' },
         ])
 
-        expect(collection.json().body).toEqual({
+        expect(collection.getBody()).toEqual({
             items: [{ id: 1, fullName: 'John Doe' }],
         })
     })
@@ -159,7 +159,7 @@ describe('Response Structure', () => {
             { id: 1, name: 'A' },
         ])
 
-        expect(collection.json().body).toEqual({
+        expect(collection.getBody()).toEqual({
             results: [{ id: 1, name: 'A' }],
         })
     })
@@ -169,7 +169,7 @@ describe('Response Structure', () => {
 
         const resource = new GenericResource({ id: 1, name: 'Test' })
 
-        expect(resource.json().body).toEqual({
+        expect(resource.getBody()).toEqual({
             result: { id: 1, name: 'Test' },
         })
     })
@@ -183,7 +183,7 @@ describe('Response Structure', () => {
 
         const resource = new GenericResource({ id: 1, name: 'Test' })
 
-        expect(resource.json().body).toEqual({
+        expect(resource.getBody()).toEqual({
             value: { id: 1, name: 'Test' },
             kind: 'generic',
             root: 'data',
@@ -196,7 +196,7 @@ describe('Response Structure', () => {
 
         const resource = new Resource({ firstName: 'John', lastName: 'Doe' })
 
-        expect(resource.json().body).toEqual({
+        expect(resource.getBody()).toEqual({
             payload: { first_name: 'John', last_name: 'Doe' },
         })
     })
@@ -206,7 +206,7 @@ describe('Response Structure', () => {
 
         const resource = new Resource({ id: 1, name: 'Test' })
 
-        expect(resource.json().body).toEqual({ id: 1, name: 'Test' })
+        expect(resource.getBody()).toEqual({ id: 1, name: 'Test' })
     })
 
     it('supports per-resource wrap override over global wrap setting', () => {
@@ -221,7 +221,7 @@ describe('Response Structure', () => {
 
         const resource = new UserResource({ id: 1, name: 'Test' })
 
-        expect(resource.json().body).toEqual({
+        expect(resource.getBody()).toEqual({
             result: { id: 1, name: 'Test' },
         })
     })
@@ -230,7 +230,7 @@ describe('Response Structure', () => {
         setGlobalResponseWrap(false)
 
         const resource = new Resource({ id: 1, name: 'Test' })
-        const body = resource.withMeta({ requestId: 'r-1' }).json().body
+        const body = resource.withMeta({ requestId: 'r-1' }).getBody()
 
         expect(body).toEqual({
             id: 1,
@@ -247,7 +247,7 @@ describe('Response Structure', () => {
             pagination: { currentPage: 1, total: 10 },
         })
 
-        expect(collection.json().body).toEqual({
+        expect(collection.getBody()).toEqual({
             data: [{ id: 1, name: 'A' }],
             meta: { current_page: 1, total: 10 },
         })
@@ -261,7 +261,7 @@ describe('Response Structure', () => {
             { id: 2, name: 'B' },
         ])
 
-        expect(collection.json().body).toEqual([
+        expect(collection.getBody()).toEqual([
             { id: 1, name: 'A' },
             { id: 2, name: 'B' },
         ])

@@ -51,7 +51,7 @@ Returns the original resource payload unless overridden.
 Calling `.json()` prepares a structured response:
 
 ```ts
-resource.json().body;
+resource.getBody();
 ```
 
 Produces:
@@ -70,7 +70,7 @@ Produces:
 You may attach extra top-level fields:
 
 ```ts
-resource.additional({ status: 'success' }).body;
+resource.additional({ status: 'success' }).getBody();
 ```
 
 Result:
