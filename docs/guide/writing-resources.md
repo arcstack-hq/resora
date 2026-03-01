@@ -297,11 +297,9 @@ Output:
       "custom": "data"
     }
   ],
-  "meta": {
-    "cursor": {
-      "previous": "abc",
-      "next": "def"
-    }
+  "cursor": {
+    "previous": "abc",
+    "next": "def"
   }
 }
 ```
@@ -335,7 +333,10 @@ Output:
     "currentPage": 1,
     "total": 10
   },
-  "cursor": { "previous": "abc", "next": "def" }
+  "cursor": {
+    "previous": "abc",
+    "next": "def"
+  }
 }
 ```
 

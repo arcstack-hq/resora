@@ -108,11 +108,9 @@ Output:
 ```json
 {
   "data": [...],
-  "meta": {
-    "cursor": {
-      "previous": "abc",
-      "next": "def"
-    }
+  "cursor": {
+    "previous": "abc",
+    "next": "def"
   }
 }
 ```
