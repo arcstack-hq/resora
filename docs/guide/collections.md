@@ -81,10 +81,8 @@ Output becomes:
 {
   "data": [...],
   "meta": {
-    "pagination": {
-      "currentPage": 1,
-      "total": 10
-    }
+    "currentPage": 1,
+    "total": 10
   }
 }
 ```
@@ -138,10 +136,8 @@ Output:
 ```json
 {
   "data": [...],
-  "meta": {
-    "pagination": {...},
-    "cursor": {...}
-  }
+  "meta":  {...},
+  "cursor": {...}
 }
 ```
 

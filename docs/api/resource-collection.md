@@ -45,9 +45,7 @@ Resora automatically adds:
 ```json
 {
   "data": [],
-  "meta": {
-    "pagination": {},
-    "cursor": {}
-  }
+  "meta": {},
+  "cursor": {}
 }
 ```

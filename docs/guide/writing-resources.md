@@ -267,10 +267,8 @@ Output:
     }
   ],
   "meta": {
-    "pagination": {
-      "currentPage": 1,
-      "total": 10
-    }
+    "currentPage": 1,
+    "total": 10
   }
 }
 ```
@@ -334,9 +332,10 @@ Output:
     }
   ],
   "meta": {
-    "pagination": { "currentPage": 1, "total": 10 },
-    "cursor": { "previous": "abc", "next": "def" }
-  }
+    "currentPage": 1,
+    "total": 10
+  },
+  "cursor": { "previous": "abc", "next": "def" }
 }
 ```
 
