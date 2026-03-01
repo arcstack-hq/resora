@@ -108,8 +108,14 @@ describe('H3 Requests', () => {
 
         expect(jsonResponse).toEqual({
             data: resource.data,
+            links: {
+                last: 10,
+            },
             meta: {
-                pagination: resource.pagination,
+                total: 100,
+                per_page: 10,
+                current_page: 1,
+                last_page: 10,
             },
         })
     })
@@ -149,8 +155,14 @@ describe('H3 Requests', () => {
 
         expect(jsonResponse).toEqual({
             data: [],
+            links: {
+                last: 1,
+            },
             meta: {
-                pagination: resource.pagination,
+                total: 0,
+                per_page: 10,
+                current_page: 1,
+                last_page: 1,
             },
         })
     })

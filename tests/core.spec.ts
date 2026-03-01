@@ -196,7 +196,7 @@ describe('Extending Collections', () => {
 
         expect(customResource.json().body).toEqual({
             data: [{ id: 1, name: 'Test Resource', custom: 'data' }],
-            meta: { pagination: resource.pagination },
+            meta: { current_page: 1, total: 10 },
         })
     })
 
@@ -256,7 +256,7 @@ describe('Extending Collections', () => {
 
         expect(customResource.json().body).toEqual({
             data: [{ id: 1, name: 'Test Resource', custom: 'data' }],
-            meta: { pagination: resource.pagination, cursor: resource.cursor },
+            meta: { current_page: 1, total: 10, cursor: resource.cursor },
         })
     })
 

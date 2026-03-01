@@ -8,6 +8,23 @@ import path from 'path'
  */
 let globalPreferredCase: CaseStyle | undefined
 let globalResponseStructure: ResponseStructureConfig | undefined
+let globalPaginatedExtras: Config['paginatedExtras'] = ['meta', 'links']
+let globalPaginatedLinks: Config['paginatedLinks'] = {
+    first: 'first',
+    last: 'last',
+    prev: 'prev',
+    next: 'next',
+}
+let globalPaginatedMeta: Config['paginatedMeta'] = {
+    to: 'to',
+    from: 'from',
+    links: 'links',
+    path: 'path',
+    total: 'total',
+    per_page: 'per_page',
+    last_page: 'last_page',
+    current_page: 'current_page',
+}
 
 /**
  * Set the global preferred case style for all resources.
@@ -99,6 +116,139 @@ export const getGlobalResponseFactory = (): ResponseFactory | undefined => {
 }
 
 /**
+ * Set global pagination extras keys.
+ */
+export const setGlobalPaginatedExtras = (extras: Config['paginatedExtras']): void => {
+    globalPaginatedExtras = extras
+}
+
+/**
+ * Get global pagination extras keys.
+ */
+export const getGlobalPaginatedExtras = (): Config['paginatedExtras'] => {
+    return globalPaginatedExtras
+}
+
+/**
+ * Set global pagination links mapping.
+ */
+export const setGlobalPaginatedLinks = (links: Config['paginatedLinks']): void => {
+    globalPaginatedLinks = {
+        ...globalPaginatedLinks,
+        ...links,
+    }
+}
+
+/**
+ * Get global pagination links mapping.
+ */
+export const getGlobalPaginatedLinks = (): Config['paginatedLinks'] => {
+    return globalPaginatedLinks
+}
+
+/**
+ * Set global pagination meta mapping.
+ */
+export const setGlobalPaginatedMeta = (meta: Config['paginatedMeta']): void => {
+    globalPaginatedMeta = {
+        ...globalPaginatedMeta,
+        ...meta,
+    }
+}
+
+/**
+ * Get global pagination meta mapping.
+ */
+export const getGlobalPaginatedMeta = (): Config['paginatedMeta'] => {
+    return globalPaginatedMeta
+}
+
+/**
+ * Resolve the configured root keys for pagination extras.
+ */
+export const getPaginationExtraKeys = (): { metaKey?: string; linksKey?: string } => {
+    if (Array.isArray(globalPaginatedExtras)) {
+        return {
+            metaKey: globalPaginatedExtras.includes('meta') ? 'meta' : undefined,
+            linksKey: globalPaginatedExtras.includes('links') ? 'links' : undefined,
+        }
+    }
+
+    return {
+        metaKey: globalPaginatedExtras.meta,
+        linksKey: globalPaginatedExtras.links,
+    }
+}
+
+/**
+ * Build configured pagination/cursor extras for the final response root.
+ */
+export const buildPaginationExtras = (resource: any): Record<string, any> => {
+    const { metaKey, linksKey } = getPaginationExtraKeys()
+    const extra: Record<string, any> = {}
+
+    const pagination = resource?.pagination
+    const cursor = resource?.cursor
+
+    const metaBlock: Record<string, any> = {}
+    const linksBlock: Record<string, any> = {}
+
+    if (pagination) {
+        const metaSource: Record<string, any> = {
+            to: pagination.to,
+            from: pagination.from,
+            links: pagination.links,
+            path: pagination.path,
+            total: pagination.total,
+            per_page: pagination.perPage,
+            last_page: pagination.lastPage,
+            current_page: pagination.currentPage,
+        }
+
+        for (const [sourceKey, outputKey] of Object.entries(globalPaginatedMeta)) {
+            if (!outputKey) continue
+
+            const value = metaSource[sourceKey]
+            if (typeof value !== 'undefined') {
+                metaBlock[outputKey] = value
+            }
+        }
+
+        const linksSource: Record<string, any> = {
+            first: pagination.firstPage,
+            last: pagination.lastPage,
+            prev: pagination.prevPage,
+            next: pagination.nextPage,
+        }
+
+        for (const [sourceKey, outputKey] of Object.entries(globalPaginatedLinks)) {
+            if (!outputKey) continue
+
+            const value = linksSource[sourceKey]
+            if (typeof value !== 'undefined') {
+                linksBlock[outputKey] = value
+            }
+        }
+    }
+
+    if (cursor) {
+        metaBlock.cursor = cursor
+    }
+
+    if (metaKey && Object.keys(metaBlock).length > 0) {
+        extra[metaKey] = metaBlock
+    } else if (!metaKey && cursor) {
+        extra.cursor = cursor
+    }
+
+    if (linksKey && Object.keys(linksBlock).length > 0) {
+        extra[linksKey] = linksBlock
+    }
+
+    return extra
+}
+
+/**
  * Build a response envelope from payload/meta and optional custom factory.
  * 
  * @param param0 
@@ -107,6 +257,7 @@ export const getGlobalResponseFactory = (): ResponseFactory | undefined => {
 export const buildResponseEnvelope = ({
     payload,
     meta,
+    metaKey = 'meta',
     wrap = true,
     rootKey = 'data',
     factory,
@@ -114,6 +265,7 @@ export const buildResponseEnvelope = ({
 }: {
     payload: any
     meta?: Record<string, any> | undefined
+    metaKey?: string
     wrap?: boolean
     rootKey?: string
     factory?: ResponseFactory | undefined
@@ -135,19 +287,19 @@ export const buildResponseEnvelope = ({
         if (isPlainObject(payload)) {
             return {
                 ...payload,
-                meta,
+                [metaKey]: meta,
             }
         }
 
         return {
             [rootKey]: payload,
-            meta,
+            [metaKey]: meta,
         }
     }
 
     const body: Record<string, any> = { [rootKey]: payload }
     if (typeof meta !== 'undefined') {
-        body.meta = meta
+        body[metaKey] = meta
     }
 
     return body
@@ -159,13 +311,45 @@ export const buildResponseEnvelope = ({
  * @param value The value to check
  * @returns True if the value is a plain object, false otherwise
  */
-const isPlainObject = (value: any): value is Record<string, any> => {
+export const isPlainObject = (value: any): value is Record<string, any> => {
     if (typeof value !== 'object' || value === null) return false
     if (Array.isArray(value) || value instanceof Date || value instanceof RegExp) return false
 
     const proto = Object.getPrototypeOf(value)
 
     return proto === Object.prototype || proto === null
+}
+
+/**
+ * Append root-level properties to a response body while preserving array payload integrity.
+ */
+export const appendRootProperties = (
+    body: any,
+    extra?: Record<string, any> | undefined,
+    rootKey: string = 'data'
+): any => {
+    if (!extra || Object.keys(extra).length === 0) {
+        return body
+    }
+
+    if (Array.isArray(body)) {
+        return {
+            [rootKey]: body,
+            ...extra,
+        }
+    }
+
+    if (isPlainObject(body)) {
+        return {
+            ...body,
+            ...extra,
+        }
+    }
+
+    return {
+        [rootKey]: body,
+        ...extra,
+    }
 }
 
 /**

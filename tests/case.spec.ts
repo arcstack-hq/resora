@@ -416,7 +416,7 @@ describe('Case Transformation with Collections', () => {
 
         expect(body).toEqual({
             data: [{ first_name: 'John', last_name: 'Doe' }],
-            meta: { pagination: { currentPage: 1, total: 10 } },
+            meta: { current_page: 1, total: 10 },
         })
     })
 

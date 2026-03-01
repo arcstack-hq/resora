@@ -20,13 +20,14 @@ describe('Resource Pagination', () => {
 
         expect(jsonResponse).toEqual({
             data: [{ id: 1 }, { id: 2 }],
+            links: {
+                last: 10,
+            },
             meta: {
-                pagination: {
-                    total: 100,
-                    perPage: 10,
-                    currentPage: 1,
-                    lastPage: 10,
-                },
+                total: 100,
+                per_page: 10,
+                current_page: 1,
+                last_page: 10,
             },
         })
     })
@@ -81,13 +82,14 @@ describe('Resource Pagination', () => {
 
         expect(jsonResponse).toEqual({
             data: [],
+            links: {
+                last: 1,
+            },
             meta: {
-                pagination: {
-                    total: 0,
-                    perPage: 10,
-                    currentPage: 1,
-                    lastPage: 1,
-                },
+                total: 0,
+                per_page: 10,
+                current_page: 1,
+                last_page: 1,
             },
         })
     })

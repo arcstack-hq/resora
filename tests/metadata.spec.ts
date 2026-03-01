@@ -16,7 +16,7 @@ describe('Metadata with() API', () => {
 
         expect(body).toEqual({
             data: { id: 1, name: 'John' },
-            meta: { traceId: 'abc-123' },
+            traceId: 'abc-123',
         })
     })
 
@@ -26,7 +26,7 @@ describe('Metadata with() API', () => {
 
         expect(body).toEqual({
             data: { id: 1, role: 'admin' },
-            meta: { actor: 'admin' },
+            actor: 'admin',
         })
     })
 
@@ -39,10 +39,8 @@ describe('Metadata with() API', () => {
 
         expect(body).toEqual({
             data: { id: 1 },
-            meta: {
-                request: { id: 'r1', source: 'worker' },
-                debug: true,
-            },
+            request: { id: 'r1', source: 'worker' },
+            debug: true,
         })
     })
 
@@ -54,7 +52,7 @@ describe('Metadata with() API', () => {
 
         expect(body).toEqual({
             data: { id: 1 },
-            meta: { late: true },
+            late: true,
         })
     })
 
@@ -69,9 +67,10 @@ describe('Metadata with() API', () => {
         expect(body).toEqual({
             data: [{ id: 1 }],
             meta: {
-                pagination: { currentPage: 1, total: 10 },
-                requestId: 'r-100',
+                current_page: 1,
+                total: 10,
             },
+            requestId: 'r-100',
         })
     })
 
@@ -87,8 +86,8 @@ describe('Metadata with() API', () => {
             data: [{ id: 1 }],
             meta: {
                 cursor: { previous: 'p1', next: 'n1' },
-                requestId: 'r-200',
             },
+            requestId: 'r-200',
         })
     })
 
@@ -100,7 +99,7 @@ describe('Metadata with() API', () => {
 
         expect(body).toEqual({
             payload: { id: 1, name: 'John' },
-            meta: { requestId: 'req-1' },
+            requestId: 'req-1',
         })
     })
 
@@ -110,7 +109,7 @@ describe('Metadata with() API', () => {
 
         expect(body).toEqual({
             data: { id: 1, role: 'admin' },
-            meta: { policy: 'strict' },
+            policy: 'strict',
         })
     })
 
@@ -127,7 +126,7 @@ describe('Metadata with() API', () => {
 
         expect(resource.json().body).toEqual({
             data: { id: 1, name: 'John' },
-            meta: { feature: 'custom-resource-meta' },
+            feature: 'custom-resource-meta',
         })
     })
 
@@ -148,9 +147,10 @@ describe('Metadata with() API', () => {
         expect(collection.json().body).toEqual({
             data: [{ id: 1 }],
             meta: {
-                pagination: { currentPage: 2, total: 20 },
-                requestId: 'req-900',
+                current_page: 2,
+                total: 20,
             },
+            requestId: 'req-900',
         })
     })
 
@@ -172,8 +172,8 @@ describe('Metadata with() API', () => {
             data: [{ id: 1 }],
             meta: {
                 cursor: { previous: 'p1', next: 'n1' },
-                trace: 'trace-42',
             },
+            trace: 'trace-42',
         })
     })
 })

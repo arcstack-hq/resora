@@ -11,10 +11,13 @@ import { ServerResponse } from './ServerResponse'
 import type { Response } from 'express'
 import { Resource } from './Resource'
 import {
+  appendRootProperties,
+  buildPaginationExtras,
   buildResponseEnvelope,
   getCaseTransformer,
   getGlobalCase,
   getGlobalResponseStructure,
+  getPaginationExtraKeys,
   mergeMetadata,
   resolveWithHookMetadata,
   transformKeys,
@@ -103,18 +106,14 @@ export class ResourceCollection<R extends ResourceData[] | Collectible = Resourc
         data = data.map((item: any) => new this.collects!(item).data())
       }
 
-      let meta: CollectionBody<R>['meta']
+      const paginationExtras = !Array.isArray(this.resource)
+        ? buildPaginationExtras(this.resource)
+        : {}
 
-      if (!Array.isArray(this.resource)) {
-        if (this.resource.pagination && this.resource.cursor)
-          meta = {
-            pagination: this.resource.pagination,
-            cursor: this.resource.cursor
-          } as CollectionBody<R>['meta']
-        else if (this.resource.pagination)
-          meta = { pagination: this.resource.pagination } as CollectionBody<R>['meta']
-        else if (this.resource.cursor)
-          meta = { cursor: this.resource.cursor } as CollectionBody<R>['meta']
+      const { metaKey } = getPaginationExtraKeys()
+      const configuredMeta = metaKey ? paginationExtras[metaKey] : undefined
+      if (metaKey) {
+        delete paginationExtras[metaKey]
       }
 
       // Apply case transformation if configured
@@ -127,14 +126,13 @@ export class ResourceCollection<R extends ResourceData[] | Collectible = Resourc
       }
 
       const hookMeta = resolveWithHookMetadata(this, ResourceCollection.prototype.with)
+      const customMeta = mergeMetadata(hookMeta, this.additionalMeta)
 
       const { wrap, rootKey, factory } = this.resolveResponseStructure()
       this.body = buildResponseEnvelope({
         payload: data,
-        meta: mergeMetadata(
-          mergeMetadata(meta as MetaData | undefined, hookMeta),
-          this.additionalMeta
-        ),
+        meta: configuredMeta,
+        metaKey,
         wrap,
         rootKey,
         factory,
@@ -143,6 +141,15 @@ export class ResourceCollection<R extends ResourceData[] | Collectible = Resourc
           resource: this.resource,
         },
       }) as CollectionBody<R>
+
+      this.body = appendRootProperties(
+        this.body,
+        {
+          ...paginationExtras,
+          ...(customMeta || {}),
+        },
+        rootKey
+      ) as CollectionBody<R>
     }
 
     return this
@@ -168,7 +175,8 @@ export class ResourceCollection<R extends ResourceData[] | Collectible = Resourc
     this.additionalMeta = mergeMetadata(this.additionalMeta, resolvedMeta)
 
     if (this.called.json) {
-      this.body.meta = mergeMetadata(this.body.meta as MetaData | undefined, resolvedMeta) as CollectionBody<R>['meta']
+      const { rootKey } = this.resolveResponseStructure()
+      this.body = appendRootProperties(this.body, resolvedMeta, rootKey) as CollectionBody<R>
     }
 
     return this

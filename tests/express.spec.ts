@@ -100,8 +100,14 @@ describe('Connect-style Requests (Express)', () => {
         const response = await supertest(app).get('/test')
         expect(response.body).toEqual({
             data: resource.data,
+            links: {
+                last: 10,
+            },
             meta: {
-                pagination: resource.pagination,
+                total: 100,
+                per_page: 10,
+                current_page: 1,
+                last_page: 10,
             },
         })
     })
@@ -135,8 +141,14 @@ describe('Connect-style Requests (Express)', () => {
         const response = await supertest(app).get('/test')
         expect(response.body).toEqual({
             data: resource.data,
+            links: {
+                last: 1,
+            },
             meta: {
-                pagination: resource.pagination,
+                total: 0,
+                per_page: 10,
+                current_page: 1,
+                last_page: 1,
             },
         })
     })
@@ -202,7 +214,8 @@ describe('Connect-style Requests (Express)', () => {
         expect(response.body).toEqual({
             data: [{ id: 1, name: 'Test Resource' }],
             meta: {
-                pagination: { currentPage: 1, total: 10 },
+                current_page: 1,
+                total: 10,
                 fromWithResponse: true,
             },
         })

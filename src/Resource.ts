@@ -12,6 +12,7 @@ import { ServerResponse } from './ServerResponse'
 import type { Response } from 'express'
 import { ResourceCollection } from './ResourceCollection'
 import {
+  appendRootProperties,
   buildResponseEnvelope,
   getCaseTransformer,
   getGlobalCase,
@@ -148,11 +149,11 @@ export class Resource<R extends ResourceData | NonCollectible = ResourceData> {
       }
 
       const hookMeta = resolveWithHookMetadata(this, Resource.prototype.with)
+      const customMeta = mergeMetadata(hookMeta, this.additionalMeta)
 
       const { wrap, rootKey, factory } = this.resolveResponseStructure()
       this.body = buildResponseEnvelope({
         payload: data,
-        meta: mergeMetadata(hookMeta, this.additionalMeta),
         wrap,
         rootKey,
         factory,
@@ -161,6 +162,8 @@ export class Resource<R extends ResourceData | NonCollectible = ResourceData> {
           resource: this.resource,
         },
       }) as ResourceBody<R>
+
+      this.body = appendRootProperties(this.body, customMeta, rootKey) as ResourceBody<R>
     }
 
     return this
@@ -186,7 +189,8 @@ export class Resource<R extends ResourceData | NonCollectible = ResourceData> {
     this.additionalMeta = mergeMetadata(this.additionalMeta, resolvedMeta)
 
     if (this.called.json) {
-      this.body.meta = mergeMetadata(this.body.meta, resolvedMeta)
+      const { rootKey } = this.resolveResponseStructure()
+      this.body = appendRootProperties(this.body, resolvedMeta, rootKey)
     }
 
     return this

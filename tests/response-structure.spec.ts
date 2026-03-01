@@ -114,7 +114,7 @@ describe('Response Structure', () => {
 
         expect(collection.json().body).toEqual({
             items: [{ id: 1, name: 'A' }],
-            meta: { pagination: { currentPage: 1, total: 10 } },
+            meta: { current_page: 1, total: 10 },
         })
     })
 
@@ -236,7 +236,7 @@ describe('Response Structure', () => {
         expect(body).toEqual({
             id: 1,
             name: 'Test',
-            meta: { requestId: 'r-1' },
+            requestId: 'r-1',
         })
     })
 
@@ -250,7 +250,7 @@ describe('Response Structure', () => {
 
         expect(collection.json().body).toEqual({
             data: [{ id: 1, name: 'A' }],
-            meta: { pagination: { currentPage: 1, total: 10 } },
+            meta: { current_page: 1, total: 10 },
         })
     })
 

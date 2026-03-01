@@ -12,10 +12,13 @@ import { ServerResponse } from './ServerResponse'
 import type { Response } from 'express'
 import { Resource } from './Resource'
 import {
+  appendRootProperties,
+  buildPaginationExtras,
   buildResponseEnvelope,
   getCaseTransformer,
   getGlobalCase,
   getGlobalResponseStructure,
+  getPaginationExtraKeys,
   mergeMetadata,
   resolveWithHookMetadata,
   transformKeys,
@@ -137,16 +140,11 @@ export class GenericResource<
         data = data.data
       }
 
-      if ((<any>this.resource).pagination && data.data && Array.isArray(data.data)) {
-        delete data.pagination
-      }
-
-      let meta: GenericBody<R>['meta']
-
-      if (Array.isArray(data) && (<any>this.resource).pagination) {
-        meta = {
-          pagination: (<any>this.resource).pagination,
-        }
+      const paginationExtras = buildPaginationExtras(this.resource)
+      const { metaKey } = getPaginationExtraKeys()
+      const configuredMeta = metaKey ? paginationExtras[metaKey] : undefined
+      if (metaKey) {
+        delete paginationExtras[metaKey]
       }
 
       // Apply case transformation if configured
@@ -157,14 +155,13 @@ export class GenericResource<
       }
 
       const hookMeta = resolveWithHookMetadata(this, GenericResource.prototype.with)
+      const customMeta = mergeMetadata(hookMeta, this.additionalMeta)
 
       const { wrap, rootKey, factory } = this.resolveResponseStructure()
       this.body = buildResponseEnvelope({
         payload: data,
-        meta: mergeMetadata(
-          mergeMetadata(meta as MetaData | undefined, hookMeta),
-          this.additionalMeta
-        ),
+        meta: configuredMeta,
+        metaKey,
         wrap,
         rootKey,
         factory,
@@ -173,6 +170,15 @@ export class GenericResource<
           resource: this.resource,
         },
       }) as GenericBody<R>
+
+      this.body = appendRootProperties(
+        this.body,
+        {
+          ...paginationExtras,
+          ...(customMeta || {}),
+        },
+        rootKey
+      ) as GenericBody<R>
     }
 
     // if (this.collects) console.log(this.body, this.constructor.name, this.collects.name)
@@ -199,7 +205,8 @@ export class GenericResource<
     this.additionalMeta = mergeMetadata(this.additionalMeta, resolvedMeta)
 
     if (this.called.json) {
-      this.body.meta = mergeMetadata(this.body.meta, resolvedMeta)
+      const { rootKey } = this.resolveResponseStructure()
+      this.body = appendRootProperties(this.body, resolvedMeta, rootKey) as GenericBody<R>
     }
 
     return this
