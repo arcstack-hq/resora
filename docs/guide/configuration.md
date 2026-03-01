@@ -165,6 +165,94 @@ The CLI will replace:
 - <span v-pre>`{{collects = Resource}}`</span>
 - <span v-pre>`{{import = Resource}}`</span>
 
+### **`preferredCase`** - _`camel`_
+
+Controls key casing for serialized resource payloads.
+
+Supported values:
+
+- `camel`
+- `snake`
+- `pascal`
+- `kebab`
+- Custom transformer `(key: string) => string`
+
+#### Example
+
+```ts
+export default defineConfig({
+  preferredCase: 'snake',
+});
+```
+
+If your resource returns:
+
+```json
+{ "firstName": "John", "lastName": "Doe" }
+```
+
+Response payload becomes:
+
+```json
+{ "first_name": "John", "last_name": "Doe" }
+```
+
+#### Custom transformer
+
+```ts
+export default defineConfig({
+  preferredCase: (key) => key.toUpperCase(),
+});
+```
+
+### **`responseStructure`** - _`{ rootKey: 'data' }`_
+
+Customizes the JSON envelope used for serialized responses.
+
+Supported options:
+
+- `rootKey`: rename wrapper key (`data` to `payload`, etc.)
+- `factory`: fully custom response builder
+
+#### Custom root key
+
+```ts
+export default defineConfig({
+  responseStructure: {
+    rootKey: 'payload',
+  },
+});
+```
+
+Response becomes:
+
+```json
+{
+  "payload": { ... }
+}
+```
+
+#### Custom response factory
+
+```ts
+export default defineConfig({
+  responseStructure: {
+    factory: (payload, context) => ({
+      success: true,
+      type: context.type,
+      result: payload,
+    }),
+  },
+});
+```
+
+`context` includes:
+
+- `type`: `resource`, `collection`, or `generic`
+- `rootKey`: resolved wrapper key
+- `resource`: original input resource
+- `meta`: resolved metadata (if any)
+
 ## When Configuration Is Useful
 
 Use configuration when:

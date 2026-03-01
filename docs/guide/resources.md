@@ -96,6 +96,20 @@ Resources also support metadata customization via `with()` and `withMeta()`.
 
 See the full guide in [Writing Resources - Metadata APIs: with() vs withMeta()](./writing-resources.md#metadata-apis-with-vs-withmeta).
 
+## Response Customization
+
+You can also customize:
+
+- Payload key casing via `preferredCase`
+- JSON envelope via `responseStructure`
+- Final outgoing transport response via `withResponse()`
+
+See:
+
+- [Configuration](./configuration.md#preferredcase---camel-by-default)
+- [Configuration](./configuration.md#responsestructure-----rootkey-data--by-default)
+- [Writing Resources - Outgoing Response Hook: withResponse()](./writing-resources.md#outgoing-response-hook-withresponse)
+
 ## Building a Response Object
 
 ```ts

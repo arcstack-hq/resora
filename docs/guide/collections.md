@@ -171,6 +171,18 @@ Collections also support metadata customization:
 
 Details and merge behavior are documented in [Writing Resources - Metadata APIs: with() vs withMeta()](./writing-resources.md#metadata-apis-with-vs-withmeta).
 
+Collections also support:
+
+- Global/per-class key case customization (`preferredCase`)
+- Global/per-class JSON envelope customization (`responseStructure`)
+- Class-level outgoing response customization (`withResponse()`)
+
+See:
+
+- [Configuration](./configuration.md#preferredcase---camel-by-default)
+- [Configuration](./configuration.md#responsestructure-----rootkey-data--by-default)
+- [Writing Resources - Outgoing Response Hook: withResponse()](./writing-resources.md#outgoing-response-hook-withresponse)
+
 ---
 
 ## Design Behavior Summary

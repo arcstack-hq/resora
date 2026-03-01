@@ -340,6 +340,61 @@ Output:
 }
 ```
 
+## Outgoing Response Hook: `withResponse()`
+
+Use `withResponse()` when you need final transport-layer customization right before dispatch.
+
+Common use cases:
+
+- Set headers
+- Set status code
+- Mutate final response body
+- Apply framework-specific response behavior
+
+### Resource Example
+
+```ts
+import { ServerResponse, Resource } from 'resora';
+
+class UserResource extends Resource {
+  withResponse(response: ServerResponse) {
+    response.header('X-Resource', 'user').setStatusCode(202);
+
+    this.body = {
+      ...this.body,
+      meta: {
+        ...(this.body.meta || {}),
+        fromWithResponse: true,
+      },
+    };
+  }
+}
+```
+
+### Collection Example
+
+```ts
+import { ServerResponse, ResourceCollection } from 'resora';
+
+class UserCollection extends ResourceCollection {
+  withResponse(response: ServerResponse) {
+    response.header('X-Collection', 'users');
+  }
+}
+```
+
+### Hook Context
+
+Inside `withResponse()`, the framework-aware context is available as:
+
+- `this.withResponseContext.response`: Resora `ServerResponse` helper
+- `this.withResponseContext.raw`: underlying Express/H3 response object
+
+This hook runs immediately before the response is dispatched in both:
+
+- Promise/await flow (`return await new Resource(...)`)
+- Explicit response flow (`resource.response(...).header(...)`)
+
 ## Design Rules When Writing Resources
 
 1. Always override `data()` when extending.

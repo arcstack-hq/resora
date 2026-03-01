@@ -6,12 +6,24 @@ The format follows semantic versioning principles.
 
 ## [Unreleased]
 
+### Added
+
+- Case customization strategies with global and per-class support (`camel`, `snake`, `pascal`, `kebab`, and custom transformers).
+- Custom response structure configuration via `responseStructure` with custom root key and full response factory support.
+- Metadata customization APIs:
+  - `with()` class hook
+  - `withMeta()` typed fluent helper
+  - deep metadata merge behavior preserving pagination/cursor defaults.
+- `withResponse()` outgoing transport hook for per-class final response mutation (headers, status, and body) before dispatch.
+
+### Documentation
+
+- Added configuration docs for `preferredCase` and `responseStructure` with examples.
+- Added writing guide coverage for `withResponse()` and hook context (`withResponseContext`).
+- Added cross-links in resources and collections guides for case, envelope, metadata, and outgoing response customization.
+
 ### Planned
 
-- Case customization strategies
-- Custom response structure configuration
-- Metadata customization hooks
-- `withResponse()` transport hook
 - Data wrapping configuration
 - Conditional attribute helpers
 
