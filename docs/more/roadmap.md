@@ -64,6 +64,8 @@ Planned:
 - Ability to rename wrapping key
 - Per-resource wrapping configuration
 
+✅ Implemented
+
 ## Conditional Attributes
 
 Add conditional transformation helpers:
@@ -71,6 +73,8 @@ Add conditional transformation helpers:
 - `this.when(condition, value | () => value)`
 - `this.whenNotNull(value)`
 - `this.mergeWhen(condition, object | () => object)`
+
+✅ Implemented
 
 ## Plugin System
 

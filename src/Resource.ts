@@ -18,7 +18,11 @@ import {
   getGlobalCase,
   getGlobalResponseStructure,
   mergeMetadata,
+  resolveMergeWhen,
+  resolveWhen,
+  resolveWhenNotNull,
   resolveWithHookMetadata,
+  sanitizeConditionalAttributes,
   transformKeys,
 } from './utility'
 
@@ -107,6 +111,27 @@ export class Resource<R extends ResourceData | NonCollectible = ResourceData> {
     return this.toArray()
   }
 
+  /**
+   * Conditionally include a value in serialized output.
+   */
+  when<T> (condition: any, value: T | (() => T)): T | undefined {
+    return resolveWhen(condition, value) as T | undefined
+  }
+
+  /**
+   * Include a value only when it is not null/undefined.
+   */
+  whenNotNull<T> (value: T | null | undefined): T | undefined {
+    return resolveWhenNotNull(value) as T | undefined
+  }
+
+  /**
+   * Conditionally merge object attributes into serialized output.
+   */
+  mergeWhen<T extends Record<string, any>> (condition: any, value: T | (() => T)): Partial<T> {
+    return resolveMergeWhen(condition, value)
+  }
+
   private resolveResponseStructure () {
     const local = (this.constructor as typeof Resource).responseStructure
     const global = getGlobalResponseStructure()
@@ -140,6 +165,8 @@ export class Resource<R extends ResourceData | NonCollectible = ResourceData> {
       if (typeof data.data !== 'undefined') {
         data = data.data
       }
+
+      data = sanitizeConditionalAttributes(data)
 
       // Apply case transformation if configured
       const caseStyle = (this.constructor as typeof Resource).preferredCase ?? getGlobalCase()

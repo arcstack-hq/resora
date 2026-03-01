@@ -89,6 +89,31 @@ Key point:
 
 - `this.id` and `this.name` are accessible because the base class proxies properties from the original resource.
 
+## Conditional Attributes
+
+Use conditional helpers to keep `data()` declarative without verbose `if` blocks.
+
+- `this.when(condition, value | () => value)`
+- `this.whenNotNull(value)`
+- `this.mergeWhen(condition, object | () => object)`
+
+```ts
+class UserResource extends Resource {
+  data() {
+    return {
+      id: this.id,
+      email: this.whenNotNull(this.email),
+      role: this.when(this.isAdmin, 'admin'),
+      ...this.mergeWhen(this.isAdmin, {
+        permissions: ['manage-users'],
+      }),
+    };
+  }
+}
+```
+
+If a condition fails, the attribute is omitted from the final serialized payload.
+
 ## Metadata APIs: `with()` vs `withMeta()`
 
 Resora supports two metadata patterns:

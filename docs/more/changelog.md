@@ -20,6 +20,10 @@ The format follows semantic versioning principles.
   - absolute pagination links via `baseUrl` + `pageName`
   - configurable pagination extras via `paginatedExtras` (including `cursor`)
   - configurable pagination key maps via `paginatedMeta`, `paginatedLinks`, and `cursorMeta`.
+- Conditional attribute helpers for declarative serialization in `data()`:
+  - `this.when(condition, value | () => value)`
+  - `this.whenNotNull(value)`
+  - `this.mergeWhen(condition, object | () => object)`
 
 ### Documentation
 
@@ -27,6 +31,7 @@ The format follows semantic versioning principles.
 - Added writing guide coverage for `withResponse()` and hook context (`withResponseContext`).
 - Added cross-links in resources and collections guides for case, envelope, metadata, and outgoing response customization.
 - Added configuration guide coverage for pagination URL generation and cursor metadata customization.
+- Added guide coverage for conditional attribute helper usage in custom resources.
 
 ### Planned
 

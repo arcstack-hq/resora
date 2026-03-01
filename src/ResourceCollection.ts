@@ -19,7 +19,11 @@ import {
   getGlobalResponseStructure,
   getPaginationExtraKeys,
   mergeMetadata,
+  resolveMergeWhen,
+  resolveWhen,
+  resolveWhenNotNull,
   resolveWithHookMetadata,
+  sanitizeConditionalAttributes,
   transformKeys,
 } from './utility'
 
@@ -73,6 +77,27 @@ export class ResourceCollection<R extends ResourceData[] | Collectible = Resourc
     return this.toArray()
   }
 
+  /**
+   * Conditionally include a value in serialized output.
+   */
+  when<T> (condition: any, value: T | (() => T)): T | undefined {
+    return resolveWhen(condition, value) as T | undefined
+  }
+
+  /**
+   * Include a value only when it is not null/undefined.
+   */
+  whenNotNull<T> (value: T | null | undefined): T | undefined {
+    return resolveWhenNotNull(value) as T | undefined
+  }
+
+  /**
+   * Conditionally merge object attributes into serialized output.
+   */
+  mergeWhen<T extends Record<string, any>> (condition: any, value: T | (() => T)): Partial<T> {
+    return resolveMergeWhen(condition, value)
+  }
+
   private resolveResponseStructure () {
     const local = (this.constructor as typeof ResourceCollection).responseStructure
     const collectsLocal = (this.collects as typeof Resource | undefined)?.responseStructure
@@ -105,6 +130,8 @@ export class ResourceCollection<R extends ResourceData[] | Collectible = Resourc
       if (this.collects) {
         data = data.map((item: any) => new this.collects!(item).data())
       }
+
+      data = sanitizeConditionalAttributes(data) as ResourceData[]
 
       const paginationExtras = !Array.isArray(this.resource)
         ? buildPaginationExtras(this.resource)
