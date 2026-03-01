@@ -8,7 +8,7 @@
 
 Resora is a structured API response layer for Node.js and TypeScript backends.
 
-It provides a clean, explicit way to transform data into consistent JSON responses and automatically send them to the client. Resora supports single resources, collections, and pagination metadata while remaining framework-agnostic and strongly typed.
+It provides a clean, explicit way to transform data into consistent JSON responses and automatically send them to the client. Resora supports single resources, collections, pagination and cursor metadata, conditional attributes, and response customization while remaining framework-agnostic and strongly typed.
 
 Resora is designed for teams that care about long-term maintainability, predictable API contracts, and clean separation of concerns.
 
@@ -33,6 +33,10 @@ Resora introduces a dedicated **response transformation layer** that removes the
 - Automatic JSON response dispatch
 - First-class collection support
 - Built-in pagination metadata handling
+- Built-in cursor metadata handling
+- Conditional attribute helpers (`when`, `whenNotNull`, `mergeWhen`)
+- Configurable response envelope (`wrap`, `rootKey`, `factory`)
+- Configurable pagination URL/link output (`baseUrl`, `pageName`, key mapping)
 - Predictable and consistent response contracts
 - Strong TypeScript typing
 - Transport-layer friendly (Express, H3, and others)
@@ -93,10 +97,13 @@ class UserCollection<R extends User[]> extends ResourceCollection<R> {
 return new UserCollection({
   data: users,
   pagination: {
+    currentPage: 1,
+    lastPage: 10,
     from: 1,
     to: 10,
     perPage: 10,
     total: 100,
+    path: '/users',
   },
 }).additional({
   status: 'success',
@@ -109,13 +116,17 @@ Response:
 ```json
 {
   "data": [...],
+  "links": {
+    "last": "https://localhost/users?page=10"
+  },
   "meta": {
-    "pagination": {
-      "from": 1,
-      "to": 10,
-      "perPage": 10,
-      "total": 100
-    }
+    "from": 1,
+    "to": 10,
+    "per_page": 10,
+    "total": 100,
+    "current_page": 1,
+    "last_page": 10,
+    "path": "/users"
   },
   "status": "success",
   "message": "Users retrieved"
@@ -162,6 +173,23 @@ It works with:
 
 Adapters can be added without changing application logic.
 
+## Conditional Rendering Example
+
+```ts
+class UserResource extends Resource {
+  data() {
+    return {
+      id: this.id,
+      email: this.whenNotNull(this.email),
+      role: this.when(this.isAdmin, 'admin'),
+      ...this.mergeWhen(this.isAdmin, { permissions: ['manage-users'] }),
+    };
+  }
+}
+```
+
+Falsy/null attributes are omitted from the final serialized payload.
+
 ---
 
 ## When to Use Resora
@@ -174,6 +202,15 @@ Resora is a good fit if you:
 - Prefer explicit structure over ad-hoc JSON responses
 
 It is intentionally not opinionated about routing, validation, or persistence.
+
+---
+
+## Documentation
+
+- Getting Started: https://arcstack-hq.github.io/resora/guide/getting-started
+- Configuration: https://arcstack-hq.github.io/resora/guide/configuration
+- Conditional Rendering: https://arcstack-hq.github.io/resora/guide/conditional-attributes
+- Pagination & Cursor Recipes: https://arcstack-hq.github.io/resora/guide/pagination-cursor-recipes
 
 ---
 
