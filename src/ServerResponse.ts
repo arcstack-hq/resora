@@ -8,7 +8,7 @@ export class ServerResponse<
     | NonCollectible
     | Collectible
     | ResourceData[]
-    | ResourceData = ResourceData,
+    | ResourceData = any,
 > {
     private _status: number = 200
     headers: Record<string, string> = {}
@@ -31,8 +31,8 @@ export class ServerResponse<
         } else if ('status' in this.response) {
             this.response.status = status
         }
-        
-return this
+
+        return this
     }
 
     /**
@@ -55,8 +55,8 @@ return this
         } else if ('statusText' in this.response) {
             return this.response.statusText
         }
-        
-return undefined
+
+        return undefined
     }
 
     /**
@@ -86,8 +86,8 @@ return undefined
         for (const [key, value] of Object.entries(headers)) {
             this.#addHeader(key, value)
         }
-        
-return this
+
+        return this
     }
 
     /**
@@ -99,8 +99,8 @@ return this
      */
     header (key: string, value: string) {
         this.#addHeader(key, value)
-        
-return this
+
+        return this
     }
 
     /**

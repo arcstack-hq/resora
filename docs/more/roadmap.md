@@ -70,7 +70,7 @@ Add conditional transformation helpers:
 
 - `this.when(condition, value | () => value)`
 - `this.whenNotNull(value)`
-- `this.mergeWhen(condition, object)`
+- `this.mergeWhen(condition, object | () => object)`
 
 ## Plugin System
 

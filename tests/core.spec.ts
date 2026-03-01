@@ -54,6 +54,29 @@ describe('Core', () => {
         const response = await jsonResource.then(res => res)
         expect(response).toEqual({ data: resource })
     })
+
+    it('should allow class-level withResponse to mutate final body before dispatch', async () => {
+        class CustomResource extends Resource {
+            withResponse () {
+                this.body = {
+                    ...this.body,
+                    meta: {
+                        fromWithResponse: true,
+                    },
+                }
+            }
+        }
+
+        const resource = { id: 1, name: 'Test Resource' }
+        const response = await new CustomResource(resource).json()
+
+        expect(response).toEqual({
+            data: resource,
+            meta: {
+                fromWithResponse: true,
+            },
+        })
+    })
 })
 
 describe('Extending Resources', () => {

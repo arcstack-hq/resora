@@ -33,6 +33,10 @@ export class GenericResource<
   public resource: R
   public collects?: typeof Resource<T>
   private additionalMeta?: MetaData
+  protected withResponseContext?: {
+    response: ServerResponse<GenericBody<R>>
+    raw: Response | H3Event['res']
+  }
 
   /**
    * Preferred case style for this resource's output keys.
@@ -51,6 +55,7 @@ export class GenericResource<
     toArray?: boolean
     additional?: boolean
     with?: boolean
+    withResponse?: boolean
     status?: boolean
     then?: boolean
     toResponse?: boolean
@@ -263,7 +268,31 @@ export class GenericResource<
   response (res?: H3Event['res']): ServerResponse<GenericBody<R>> {
     this.called.toResponse = true
 
-    return new ServerResponse(res ?? this.res as never, this.body)
+    this.json()
+
+    const rawResponse = res ?? this.res as never
+    const response = new ServerResponse(rawResponse, this.body)
+    this.withResponseContext = {
+      response,
+      raw: rawResponse,
+    }
+
+    this.called.withResponse = true
+    this.withResponse(response, rawResponse)
+
+    return response
+  }
+
+  /**
+   * Customize the outgoing transport response right before dispatch.
+   *
+   * Override in custom classes to mutate headers/status/body.
+   */
+  withResponse (
+    _response?: ServerResponse<GenericBody<R>>,
+    _rawResponse?: Response | H3Event['res']
+  ): any {
+    return this
   }
 
   /**
@@ -279,6 +308,19 @@ export class GenericResource<
   ): Promise<TResult1 | TResult2> {
     this.called.then = true
     this.json()
+
+    if (this.res) {
+      const response = new ServerResponse(this.res as never, this.body)
+      this.withResponseContext = {
+        response,
+        raw: this.res,
+      }
+      this.called.withResponse = true
+      this.withResponse(response, this.res)
+    } else {
+      this.called.withResponse = true
+      this.withResponse()
+    }
 
     const resolved = Promise.resolve(this.body).then(onfulfilled, onrejected)
 

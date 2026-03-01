@@ -1,7 +1,8 @@
+import { GenericBody, Resource, ServerResponse } from 'src'
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { Resource } from 'src'
 import { ResourceCollection } from 'src/ResourceCollection'
+import { Server } from 'http'
 import express from 'express'
 import supertest from 'supertest'
 
@@ -136,6 +137,73 @@ describe('Connect-style Requests (Express)', () => {
             data: resource.data,
             meta: {
                 pagination: resource.pagination,
+            },
+        })
+    })
+
+    it('should allow class-level withResponse hook to customize headers/status/body', async () => {
+        class CustomResource extends Resource {
+            withResponse (response: ServerResponse) {
+                response
+                    .header('X-From-Hook', '1')
+                    .setStatusCode(202)
+
+                this.body = {
+                    ...this.body,
+                    meta: {
+                        fromWithResponse: true,
+                    },
+                }
+            }
+        }
+
+        app.get('/test', async (req, res) => {
+            return await new CustomResource({ id: 1, name: 'Test Resource' }, res).json()
+        })
+
+        const response = await supertest(app).get('/test')
+        expect(response.status).toEqual(202)
+        expect(response.headers['x-from-hook']).toEqual('1')
+        expect(response.body).toEqual({
+            data: { id: 1, name: 'Test Resource' },
+            meta: {
+                fromWithResponse: true,
+            },
+        })
+    })
+
+    it('should allow class-level withResponse hook on collections', async () => {
+        class CustomCollection extends ResourceCollection<{
+            data: { id: number; name: string }[]
+            pagination?: { currentPage: number; total: number }
+        }> {
+            withResponse () {
+                this.withResponseContext?.response.header('X-Collection-Hook', '1')
+
+                this.body = {
+                    ...this.body,
+                    meta: {
+                        ...(this.body.meta || {}),
+                        fromWithResponse: true,
+                    },
+                }
+            }
+        }
+
+        app.get('/test', async (req, res) => {
+            return await new CustomCollection({
+                data: [{ id: 1, name: 'Test Resource' }],
+                pagination: { currentPage: 1, total: 10 },
+            }, res).json()
+        })
+
+        const response = await supertest(app).get('/test')
+        expect(response.headers['x-collection-hook']).toEqual('1')
+        expect(response.body).toEqual({
+            data: [{ id: 1, name: 'Test Resource' }],
+            meta: {
+                pagination: { currentPage: 1, total: 10 },
+                fromWithResponse: true,
             },
         })
     })

@@ -29,6 +29,10 @@ export class ResourceCollection<R extends ResourceData[] | Collectible = Resourc
   public resource: R
   public collects?: typeof Resource<T>
   private additionalMeta?: MetaData
+  protected withResponseContext?: {
+    response: ServerResponse<CollectionBody<R>>
+    raw: Response | H3Event['res']
+  }
 
   /**
    * Preferred case style for this collection's output keys.
@@ -47,6 +51,7 @@ export class ResourceCollection<R extends ResourceData[] | Collectible = Resourc
     toArray?: boolean
     additional?: boolean
     with?: boolean
+    withResponse?: boolean
     status?: boolean
     then?: boolean
     toResponse?: boolean
@@ -223,7 +228,31 @@ export class ResourceCollection<R extends ResourceData[] | Collectible = Resourc
   response (res?: H3Event['res']): ServerResponse<CollectionBody<R>> {
     this.called.toResponse = true
 
-    return new ServerResponse(res ?? this.res as never, this.body)
+    this.json()
+
+    const rawResponse = res ?? this.res as never
+    const response = new ServerResponse(rawResponse, this.body)
+    this.withResponseContext = {
+      response,
+      raw: rawResponse,
+    }
+
+    this.called.withResponse = true
+    this.withResponse(response, rawResponse)
+
+    return response
+  }
+
+  /**
+   * Customize the outgoing transport response right before dispatch.
+   *
+   * Override in custom classes to mutate headers/status/body.
+   */
+  withResponse (
+    _response?: ServerResponse<CollectionBody<R>>,
+    _rawResponse?: Response | H3Event['res']
+  ): any {
+    return this
   }
 
   setCollects (collects: typeof Resource<T>) {
@@ -245,6 +274,19 @@ export class ResourceCollection<R extends ResourceData[] | Collectible = Resourc
   ): Promise<TResult1 | TResult2> {
     this.called.then = true
     this.json()
+
+    if (this.res) {
+      const response = new ServerResponse(this.res as never, this.body)
+      this.withResponseContext = {
+        response,
+        raw: this.res,
+      }
+      this.called.withResponse = true
+      this.withResponse(response, this.res)
+    } else {
+      this.called.withResponse = true
+      this.withResponse()
+    }
 
     const resolved = Promise.resolve(this.body).then(onfulfilled, onrejected)
 
