@@ -3,6 +3,7 @@ import { defineConfig } from 'tsdown'
 export default defineConfig([
     {
         exports: true,
+        minify: true,
         tsconfig: 'tsconfig.json',
         entry: ['src/index.ts'],
         platform: 'node',
