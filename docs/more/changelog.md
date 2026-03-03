@@ -18,11 +18,13 @@ The format follows semantic versioning principles.
 - API serialization internals now support runtime configuration loading so API usage can honor `resora.config.*`, not only CLI workflows.
 - Runtime config resolution now normalizes through `defineConfig()` for consistent merge behavior across CLI and runtime paths.
 - Moved configuration-focused assertions out of core serializer tests into a dedicated `config.spec.ts` suite for clearer test boundaries.
+- Improve metadata handling and response structure in utilities to support new configuration-driven features.
 
 ### Added
 
 - Added runtime config test reset helper to improve deterministic testing of config load/apply behavior.
 - Added dedicated configuration scenario coverage for config merging, runtime config application, and file-based runtime loading.
+- Enhanced configuration options in types and utilities for better flexibility
 
 ### Documentation
 
