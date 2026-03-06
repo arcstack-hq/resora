@@ -14,7 +14,11 @@ import { Config } from '../types'
  * 
  * @returns An object containing the keys for meta, links, and cursor extras, or `undefined` if not configured.
  */
-export const getPaginationExtraKeys = (): { metaKey?: string; linksKey?: string; cursorKey?: string } => {
+export const getPaginationExtraKeys = (): {
+    metaKey?: string;
+    linksKey?: string;
+    cursorKey?: string
+} => {
     const extras = getGlobalPaginatedExtras()
 
     if (Array.isArray(extras)) {
