@@ -2,7 +2,7 @@
 
 Use these recipes to quickly configure how pagination and cursor output is emitted.
 
-## 1) Default behavior
+## 1. Default behavior
 
 ```ts
 import { defineConfig } from 'resora';
@@ -33,7 +33,7 @@ Example:
 }
 ```
 
-## 2) Custom API domain and page query name
+## 2. Custom API domain and page query name
 
 ```ts
 import { defineConfig } from 'resora';
@@ -55,7 +55,7 @@ Generated links become:
 }
 ```
 
-## 3) Emit cursor as its own root block
+## 3. Emit cursor as its own root block
 
 ```ts
 import { defineConfig } from 'resora';
@@ -81,7 +81,7 @@ Cursor output:
 }
 ```
 
-## 4) Rename cursor keys with `cursorMeta`
+## 4. Rename cursor keys with `cursorMeta`
 
 ```ts
 import { defineConfig } from 'resora';
@@ -108,7 +108,7 @@ Cursor output:
 }
 ```
 
-## 5) Rename pagination metadata and link keys
+## 5. Rename pagination metadata and link keys
 
 ```ts
 import { defineConfig } from 'resora';
