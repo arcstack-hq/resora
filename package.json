@@ -83,7 +83,7 @@
     "vue": "^3.5.28"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "dependencies": {
     "@h3ravel/musket": "^2.2.13"
