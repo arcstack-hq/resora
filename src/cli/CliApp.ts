@@ -1,20 +1,26 @@
+import { Application, Command, Musket } from '@h3ravel/musket'
 import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs'
 import { dirname, join } from 'path'
 
-import { Command } from '@h3ravel/musket'
 import { Config } from '../types'
 import { defineConfig } from '../utilities'
 
-export class CliApp {
+export class CliApp extends Application {
     public command!: Command
     protected config: Config = {} as Config
 
     constructor(config: Partial<Config> = {}) {
+        super()
         this.config = defineConfig(config)
     }
 
+    registerMusketListeners(musket: Musket<this>): void {
+        musket.afterHandle.on(() => {
+            process.exit(0)
+        })
+    }
 
-    async loadConfig (config: Partial<Config> = {}) {
+    async loadConfig(config: Partial<Config> = {}) {
         this.config = defineConfig(config)
 
         const possibleConfigPaths = [
@@ -42,7 +48,7 @@ export class CliApp {
      * Get the current configuration object
      * @returns 
      */
-    getConfig () {
+    getConfig() {
         return this.config
     }
 
@@ -51,7 +57,7 @@ export class CliApp {
      * 
      * @returns 
      */
-    init () {
+    init() {
         const outputPath = join(process.cwd(), 'resora.config.js')
         const stubPath = join(this.config.stubsDir, this.config.stubs.config)
 
@@ -76,7 +82,7 @@ export class CliApp {
      *
      * @param filePath
      */
-    ensureDirectory (filePath: string) {
+    ensureDirectory(filePath: string) {
         const dir = dirname(filePath)
         if (!existsSync(dir)) {
             mkdirSync(dir, { recursive: true })
@@ -90,7 +96,7 @@ export class CliApp {
      * @param outputPath
      * @param replacements
      */
-    generateFile (stubPath: string, outputPath: string, replacements: Record<string, string>, options?: any) {
+    generateFile(stubPath: string, outputPath: string, replacements: Record<string, string>, options?: any) {
         if (existsSync(outputPath) && !options?.force) {
             this.command.error(`Error: ${outputPath} already exists.`)
             process.exit(1)
@@ -115,7 +121,7 @@ export class CliApp {
      * @param name
      * @param options
      */
-    makeResource (name: string, options: any) {
+    makeResource(name: string, options: any) {
         let resourceName = name
         if (options?.collection && !name.endsWith('Collection') && !name.endsWith('Resource')) {
             resourceName += 'Collection'
